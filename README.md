@@ -1,14 +1,14 @@
 # PrimeTrade Task Manager
 
-This project is a backend-focused internship assignment built with the MERN stack mindset. I wanted it to feel like something I would actually build during practice: a simple but clean task management app with authentication, role-based access, and a lightweight frontend to test the APIs without needing Postman for every action.
+A backend-focused internship assignment built on the MERN stack. I kept it close to the kind of full-stack apps I actually build — a task management system with auth, role-based access, and a small React frontend to test the APIs end to end.
 
-The backend is the main focus here, but I added a small React frontend so the auth flow and task CRUD can be tested end to end.
+The backend architecture and API design are the main focus. The frontend is minimal, just enough to show the full flow working.
 
 ## Tech Stack
 
 - Node.js
 - Express.js
-- MongoDB with Mongoose
+- MongoDB Atlas with Mongoose
 - JWT Authentication
 - bcryptjs for password hashing
 - express-validator for request validation
@@ -16,25 +16,25 @@ The backend is the main focus here, but I added a small React frontend so the au
 - Axios
 - Basic CSS
 
-## Features Implemented
+## Features
 
 - User registration and login
-- Role selection during registration
 - Password hashing with bcryptjs
 - JWT-based authentication
 - Protected routes with auth middleware
-- Role-based access using `user` and `admin`
+- Role-based access (`user` and `admin`)
+- Role selection during registration for easier RBAC testing
 - Task CRUD APIs
-- Admin-only task deletion
+- Admins can view all tasks and delete any task
+- Users can view and update only their own tasks
 - Centralized error handling
-- Validation for auth and task routes
+- Validation on auth and task routes
 - Postman collection for API testing
-- Simple React dashboard for testing the backend
+- Simple React dashboard to test backend APIs
 
 ## Folder Structure
-
 ```text
-Primetrade/
+PrimeTrade/
 |-- backend/
 |   |-- src/
 |   |   |-- config/
@@ -55,32 +55,28 @@ Primetrade/
 `-- README.md
 ```
 
-## Setup Steps
+## Setup
 
 ### 1. Clone and move into the project
-
 ```bash
-git clone <your-repo-url>
-cd Primetrade
+git clone https://github.com/Suraj1307/PrimeTrade.git
+cd PrimeTrade
 ```
 
 ### 2. Backend setup
-
 ```bash
 cd backend
 npm install
 ```
 
 Create `backend/.env`:
-
 ```env
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/primetrade
+MONGO_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_jwt_secret_here
 ```
 
 Start the backend:
-
 ```bash
 npm run dev
 ```
@@ -88,20 +84,22 @@ npm run dev
 ### 3. Frontend setup
 
 Open a second terminal:
-
 ```bash
 cd frontend
 npm install
-npm start
 ```
 
 Create `frontend/.env`:
-
 ```env
 REACT_APP_API_URL=http://localhost:5000/api
 ```
 
-Frontend runs on `http://localhost:3000` and backend runs on `http://localhost:5000`.
+Start the frontend:
+```bash
+npm start
+```
+
+Frontend runs on `http://localhost:3000`, backend on `http://localhost:5000`.
 
 ## API Overview
 
@@ -116,10 +114,9 @@ Frontend runs on `http://localhost:3000` and backend runs on `http://localhost:5
 - `POST /api/tasks`
 - `GET /api/tasks`
 - `PUT /api/tasks/:id`
-- `DELETE /api/tasks/:id` - admin only
+- `DELETE /api/tasks/:id` — admin only
 
 ### Response Format
-
 ```json
 {
   "success": true,
@@ -128,30 +125,35 @@ Frontend runs on `http://localhost:3000` and backend runs on `http://localhost:5
 }
 ```
 
-## Why I Chose This Architecture
+## Architecture Decisions
 
-I kept the backend modular because it makes the code easier to read and maintain when features grow. Separating controllers, routes, middleware, and models is a pattern I have used in my CRUD and chat app projects, and it helps keep business logic out of route files.
+I kept the backend modular — controllers, routes, middleware, and models each have a clear job. It's easier to read and extend without logic piling up in one file.
 
-JWT authentication felt like the right choice here because it is simple to use in a frontend-backend project and works well for protected APIs. MongoDB also fits naturally because of its flexible document structure, and I am already comfortable using Mongoose from MERN projects.
+JWT made sense here because it works well with a separate frontend and keeps protected routes straightforward. MongoDB fits naturally given the flexible document structure, and I'm already comfortable with Mongoose from other MERN projects.
 
 ## API Documentation
 
-A ready-to-use Postman collection is available here:
+A Postman collection is included at:
+```
+postman/PrimeTrade-Task-Manager.postman_collection.json
+```
 
-- `postman/PrimeTrade-Task-Manager.postman_collection.json`
+Import it into Postman, set the `token` variable after login, and all auth and task routes are ready to test.
 
-You can import it into Postman, update the `token` variable after login, and test all auth/task routes quickly.
+## If This Grew
+
+The modular setup makes it easy to add features without touching unrelated parts. If the app scaled, I'd separate services by domain, add Redis for caching frequently requested data, put rate limiting on auth routes, and use Docker for consistent deployment.
 
 ## Future Improvements
 
-- Add Redis caching for frequently accessed task data
-- Split services if the app grows into multiple domains
-- Add rate limiting for auth-heavy routes
-- Dockerize both frontend and backend for easier setup
+- Redis caching for frequently accessed task data
+- Service separation if the app expands to multiple domains
+- Rate limiting on auth routes
+- Docker setup for both frontend and backend
 
 ## Notes
 
-- Admin users can view all tasks and delete tasks.
-- Registration supports both `user` and `admin` roles for easier testing of RBAC flows.
-- Normal users can create, view, and update only their own tasks.
-- The frontend stores JWT in `localStorage` for simplicity in this assignment project.
+- Admins can view all tasks and delete any task.
+- Regular users can create tasks, view their own, and update their own.
+- Role selection at registration is there to make RBAC testing straightforward during the assignment.
+- The frontend stores JWT in `localStorage` — fine for this project, but worth revisiting in production.
